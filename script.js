@@ -1,6 +1,5 @@
-let socket;
 const synth = window.speechSynthesis;
-let connected = false;
+let client = null;
 
 function connectToChannel() {
   const channel = document.getElementById('channel').value.toLowerCase();
@@ -10,33 +9,43 @@ function connectToChannel() {
     return;
   }
 
-  if (connected) {
-    socket.disconnect();
+  if (client) {
+    client.disconnect();
   }
 
-  socket = io('http://localhost:3000');
-  
-  socket.on('connect', () => {
-    console.log('Connected to server');
-    socket.emit('join', { channel });
+  // Create new TMI client
+  client = new tmi.Client({
+    channels: [channel]
   });
 
-  socket.on('chat', (data) => {
-    displayMessage(data);
-    speakMessage(data);
+  client.connect().catch(error => {
+    console.error('Error connecting to Twitch:', error);
+    alert('Error connecting to channel: ' + error.message);
   });
 
-  socket.on('error', (error) => {
-    console.error('Socket error:', error);
-    alert('Error connecting to channel: ' + error);
+  client.on('message', (channel, tags, message, self) => {
+    displayMessage({
+      username: tags['display-name'],
+      message: message,
+      color: tags.color || '#FFFFFF'
+    });
+    speakMessage({
+      username: tags['display-name'],
+      message: message
+    });
   });
 
-  connected = true;
+  client.on('connected', () => {
+    console.log('Connected to Twitch channel:', channel);
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML = `<div class="system-message">Connected to ${channel}'s chat!</div>`;
+  });
 }
 
 function displayMessage(data) {
   const chatMessages = document.getElementById('chat-messages');
   const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
   messageDiv.innerHTML = `<strong style="color: ${data.color}">${data.username}:</strong> ${data.message}`;
   chatMessages.appendChild(messageDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
