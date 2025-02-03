@@ -1,7 +1,9 @@
+import tmi from 'https://cdn.skypack.dev/tmi.js';
+
 const synth = window.speechSynthesis;
 let client = null;
 
-function connectToChannel() {
+export function connectToChannel() {
   const channel = document.getElementById('channel').value.toLowerCase();
   
   if (!channel) {
@@ -13,7 +15,7 @@ function connectToChannel() {
     client.disconnect();
   }
 
-  // Create new TMI client
+  // Create new TMI client using the imported tmi module
   client = new tmi.Client({
     channels: [channel]
   });
@@ -79,4 +81,7 @@ window.addEventListener('load', () => {
   document.getElementById('volume').value = localStorage.getItem('tts-volume') || 0.5;
   document.getElementById('rate').value = localStorage.getItem('tts-rate') || 1;
   document.getElementById('pitch').value = localStorage.getItem('tts-pitch') || 1;
+  
+  // Make connectToChannel globally accessible
+  window.connectToChannel = connectToChannel;
 });
