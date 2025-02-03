@@ -13,8 +13,12 @@ function connectToChannel() {
     client.disconnect();
   }
 
-  // Create new TMI client
+  // Create new TMI client with secure connection options
   client = new tmi.Client({
+    connection: {
+      secure: true,
+      reconnect: true
+    },
     channels: [channel]
   });
 
