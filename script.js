@@ -3,7 +3,7 @@ let client = null;
 
 function connectToChannel() {
   const channel = document.getElementById('channel').value.toLowerCase();
-
+  
   if (!channel) {
     alert('Please enter a channel name');
     return;
@@ -13,7 +13,7 @@ function connectToChannel() {
     client.disconnect();
   }
 
-  // Use the global tmi available from the UMD script
+  // Create new TMI client
   client = new tmi.Client({
     channels: [channel]
   });
@@ -25,12 +25,12 @@ function connectToChannel() {
 
   client.on('message', (channel, tags, message, self) => {
     displayMessage({
-      username: tags['display-name'] || tags.username,
+      username: tags['display-name'],
       message: message,
       color: tags.color || '#FFFFFF'
     });
     speakMessage({
-      username: tags['display-name'] || tags.username,
+      username: tags['display-name'],
       message: message
     });
   });
@@ -74,11 +74,9 @@ document.getElementById('pitch').addEventListener('input', (e) => {
   localStorage.setItem('tts-pitch', e.target.value);
 });
 
-// Load saved settings and expose connectToChannel globally
+// Load saved settings
 window.addEventListener('load', () => {
   document.getElementById('volume').value = localStorage.getItem('tts-volume') || 0.5;
   document.getElementById('rate').value = localStorage.getItem('tts-rate') || 1;
   document.getElementById('pitch').value = localStorage.getItem('tts-pitch') || 1;
-  
-  window.connectToChannel = connectToChannel;
 });
