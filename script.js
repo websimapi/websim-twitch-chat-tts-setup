@@ -27,12 +27,12 @@ export function connectToChannel() {
 
   client.on('message', (channel, tags, message, self) => {
     displayMessage({
-      username: tags['display-name'],
+      username: tags['display-name'] || tags.username,
       message: message,
       color: tags.color || '#FFFFFF'
     });
     speakMessage({
-      username: tags['display-name'],
+      username: tags['display-name'] || tags.username,
       message: message
     });
   });
