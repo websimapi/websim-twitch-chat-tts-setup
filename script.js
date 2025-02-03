@@ -1,4 +1,5 @@
-// Removed ES module import for tmi.js to use the global tmi provided via CDN
+import tmi from 'https://cdn.skypack.dev/tmi.js';
+
 const synth = window.speechSynthesis;
 let client = null;
 
@@ -14,7 +15,6 @@ export function connectToChannel() {
     client.disconnect();
   }
 
-  // Use the global tmi variable from the browser CDN version.
   client = new tmi.Client({
     channels: [channel]
   });
