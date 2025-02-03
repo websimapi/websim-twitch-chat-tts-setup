@@ -1,11 +1,9 @@
-import tmi from 'https://cdn.skypack.dev/tmi.js';
-
 const synth = window.speechSynthesis;
 let client = null;
 
-export function connectToChannel() {
+function connectToChannel() {
   const channel = document.getElementById('channel').value.toLowerCase();
-  
+
   if (!channel) {
     alert('Please enter a channel name');
     return;
@@ -15,6 +13,7 @@ export function connectToChannel() {
     client.disconnect();
   }
 
+  // Use the global tmi available from the UMD script
   client = new tmi.Client({
     channels: [channel]
   });
