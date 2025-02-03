@@ -1,5 +1,4 @@
-import tmi from 'https://cdn.skypack.dev/tmi.js';
-
+// Removed ES module import for tmi.js to use the global tmi provided via CDN
 const synth = window.speechSynthesis;
 let client = null;
 
@@ -15,7 +14,7 @@ export function connectToChannel() {
     client.disconnect();
   }
 
-  // Create new TMI client using the imported tmi module
+  // Use the global tmi variable from the browser CDN version.
   client = new tmi.Client({
     channels: [channel]
   });
@@ -76,12 +75,11 @@ document.getElementById('pitch').addEventListener('input', (e) => {
   localStorage.setItem('tts-pitch', e.target.value);
 });
 
-// Load saved settings
+// Load saved settings and expose connectToChannel globally
 window.addEventListener('load', () => {
   document.getElementById('volume').value = localStorage.getItem('tts-volume') || 0.5;
   document.getElementById('rate').value = localStorage.getItem('tts-rate') || 1;
   document.getElementById('pitch').value = localStorage.getItem('tts-pitch') || 1;
   
-  // Make connectToChannel globally accessible
   window.connectToChannel = connectToChannel;
 });
